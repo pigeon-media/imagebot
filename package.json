@@ -1,0 +1,29 @@
+{
+  "name": "imagebot",
+  "private": true,
+  "version": "0.0.0",
+  "description": "A bot for rendering dynamic image",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "image",
+    "opengraph"
+  ],
+  "author": "Seanghay Yath <seanghay.dev@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "fast-glob": "^3.2.11",
+    "fastify": "^4.2.1",
+    "handlebars": "^4.7.7",
+    "inline-css": "^4.0.1",
+    "magic-string": "^0.26.2",
+    "puppeteer-core": "^15.4.0"
+  }
+}
