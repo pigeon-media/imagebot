@@ -84,7 +84,6 @@ async function render(request, route) {
     extraCss: route.style || "",
     url: pathToFileURL(join(process.cwd(), "layouts/")).toString(),
   });
-
   return { html: renderedHtml, size };
 }
 
