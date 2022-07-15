@@ -1,9 +1,12 @@
 import fs from "fs/promises";
 import fg from "fast-glob";
-import { parse, join, resolve } from "path";
-import { pathToFileURL, fileURLToPath } from "url";
+import { parse, join, resolve, sep } from "path";
+import { pathToFileURL } from "url";
 import inlineCss from "inline-css";
 import Handlebars from "handlebars";
+
+const assetsPath = join(process.cwd(), "assets", sep);
+const assetsFileUrl = pathToFileURL(assetsPath).toString();
 
 const _tree = await templatesTree();
 
@@ -12,7 +15,7 @@ export async function resolveTemplateId(id) {
 }
 
 export async function templatesTree() {
-  const files = await fg("./layouts/**/*.handlebars", {
+  const files = await fg("layouts/**/*.handlebars", {
     dot: false,
     ignore: ["node_modules", ".git"],
     cwd: process.cwd(),
@@ -21,20 +24,22 @@ export async function templatesTree() {
   return Object.fromEntries(
     await Promise.all(
       files.map(async (file) => {
-        const { dir, name } = parse(file);
-        const id = join(dir.replace(/^\.\/layouts/, "/"), name).slice(1);
-        return [id, await fs.readFile(file, 'utf-8')];
+        const segments = file.split(sep);
+        const id = segments
+          .slice(1)
+          .join(".")
+          .replace(/\.handlebars$/i, "");
+        return [id, await fs.readFile(file, "utf-8")];
       })
     )
   );
 }
 
-const rawTemplate = await resolveTemplateId("main");
-const template = Handlebars.compile(rawTemplate);
-const html = template({ datetime: new Date().toISOString() });
-
-const re = await inlineCss(html, {
-  url: pathToFileURL(process.cwd()).toString() + "/assets/",
-});
-
-console.log(re)
+export async function compileTemplate(id, data) {
+  const rawTemplate = await resolveTemplateId("image.basic");
+  const template = Handlebars.compile(rawTemplate);
+  const html = template({});
+  const re = await inlineCss(html, {
+    url: assetsFileUrl,
+  });
+}

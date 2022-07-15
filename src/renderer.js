@@ -89,10 +89,11 @@ export async function createPage() {
  */
 export async function renderHtmlAsImageBuffer(
   html,
+  size,
   options = { type: "jpeg", quality: 85 }
 ) {
   const page = await createPage();
-  page.setViewport({ width: 0, height: 0 });
+  page.setViewport(size || {});
   page.setContent(html);
   return page.screenshot(options);
 }
