@@ -1,5 +1,8 @@
-export default async () => {
-  return { date: new Date().toISOString() };
+export default async ({ params }) => {
+  return { 
+    date: new Date().toISOString(), 
+    params 
+  };
 };
 
 export const size = () => ({
