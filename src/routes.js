@@ -82,9 +82,15 @@ async function render(request, route) {
   const html = template(loaderResult);
   const renderedHtml = await inlineCss(html, {
     extraCss: route.style || "",
+    removeStyleTags: false,
     url: pathToFileURL(join(process.cwd(), "layouts/")).toString(),
   });
-  return { html: renderedHtml, size };
+
+  const out = renderedHtml.replace(
+    /\/\*_extra_css\*\//g,
+    await fse.readFile("./layouts/_extra.css", "utf8")
+  );
+  return { html: out, size };
 }
 
 /**
@@ -98,6 +104,10 @@ export async function registerRoutes(server) {
     server.get(route.path + ".html", async (request, reply) => {
       const { html } = await render(request, route);
       reply.type("text/html; charset=utf-8");
+      reply.header(
+        "Cache-Control",
+        "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
+      );
       reply.send(html);
     });
 
@@ -105,6 +115,12 @@ export async function registerRoutes(server) {
       const { html, size } = await render(request, route);
       const jpegBuffer = await renderHtmlAsImageBuffer(html, size);
       reply.type("image/jpeg");
+
+      reply.header(
+        "Cache-Control",
+        "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
+      );
+
       return jpegBuffer;
     });
   }

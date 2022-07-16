@@ -1,11 +1,11 @@
+import { fetchPlace } from "../../../datasource/facetaste-client.js";
+
 export default async ({ params }) => {
-  return { 
-    date: new Date().toISOString(), 
-    params 
-  };
+  const place = await fetchPlace(params);
+  return { place };
 };
 
 export const size = () => ({
-  width: 1024,
-  height: 512,
-})
+  width: Math.round(800 * 1.5),
+  height: Math.round(418 * 1.5),
+});
